@@ -227,6 +227,14 @@ The `.claude/skills/` directory contains Claude Code skills for this project:
 - `.claude/skills/skill-creator/` — Meta-skill for creating, evaluating, and iterating
   on new skills.
 
+## Known Issues / Current Work
+- **Comment command does not highlight selected text** (2026-07-08):
+  `cozyMd.addCriticComment` currently wraps selected text as a standalone
+  CriticMarkup comment (`{>>selected<<}`), which treats the selected prose as
+  comment text instead of preserving/highlighting the prose. Proposed approach:
+  when text is selected, emit CriticMarkup highlight-with-comment syntax
+  (`{==selected==}{>>  <<}`) and place the cursor inside the new comment.
+
 ## Roadmap & Issues
 - Execution roadmap: [docs/roadmap.md](docs/roadmap.md)
 - Original product spec: [docs/Initial-prd.md](docs/Initial-prd.md)

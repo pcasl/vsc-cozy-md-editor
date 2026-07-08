@@ -635,8 +635,9 @@ async function outdentLines(editor: vscode.TextEditor): Promise<void> {
 // ────────────────────────────────────────────
 
 /**
- * Insert a CriticMarkup comment at the cursor or around the selection.
- * - If text is selected: wrap with `{>>` and `<<}`, cursor after `{>>`
+ * Insert a CriticMarkup comment at the cursor or attach one to selected text.
+ * - If text is selected: wrap it as a highlight and add an empty comment
+ *   (`{==selected==}{>>  <<}`), cursor inside the comment
  * - If no selection: insert `{>>  <<}` at cursor, cursor between delimiters
  */
 async function addCriticComment(editor: vscode.TextEditor): Promise<void> {
@@ -660,20 +661,19 @@ async function addCriticComment(editor: vscode.TextEditor): Promise<void> {
             editor.selection = new vscode.Selection(cursorPos, cursorPos);
         }
     } else {
-        // Text is selected — wrap selection with comment delimiters
+        // Text is selected — highlight selection and attach an empty comment
         const selectedText = editor.document.getText(selection);
-        const wrappedText = `{>>${selectedText}<<}`;
+        const wrappedText = `{==${selectedText}==}{>>  <<}`;
+        const cursorOffset = editor.document.offsetAt(selection.start)
+            + `{==${selectedText}==}{>> `.length;
 
         const success = await editor.edit(editBuilder => {
             editBuilder.replace(selection, wrappedText);
         });
 
         if (success) {
-            // Position cursor right after the opening `{>>` (3 chars from start)
-            const cursorPos = new vscode.Position(
-                selection.start.line,
-                selection.start.character + 3
-            );
+            // Position cursor inside the attached comment, after `{>> `
+            const cursorPos = editor.document.positionAt(cursorOffset);
             editor.selection = new vscode.Selection(cursorPos, cursorPos);
         }
     }
