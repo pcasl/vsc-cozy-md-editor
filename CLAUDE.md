@@ -235,6 +235,29 @@ The `.claude/skills/` directory contains Claude Code skills for this project:
   when text is selected, emit CriticMarkup highlight-with-comment syntax
   (`{==selected==}{>>  <<}`) and place the cursor inside the new comment.
 
+- **Track-change replacements should render as separate delete/add marks** (2026-07-09):
+  `generateCriticMarkup()` currently collapses adjacent `diffWords()` remove+add
+  pairs into CriticMarkup substitution syntax (`{~~old~>new~~}`). User requested
+  simpler replacement output as an explicit deletion followed by an addition.
+  Proposed approach: remove the substitution-pair special case and emit every
+  removed segment as `{-- --}` and every added segment as `{++ ++}`.
+
+- **Track-change replacement hunks should group deletions before additions** (2026-07-09):
+  After switching away from substitution syntax, complex replacement hunks can
+  interleave `{-- --}` and `{++ ++}` segments based on `diffWords()` output.
+  User requested added words appear after all removed words and before the next
+  unchanged text. Proposed approach: process each contiguous changed hunk as a
+  group, concatenate removed segments first, then concatenate added segments.
+
+- **Track-change replacement hunks should absorb whitespace-only separators** (2026-07-09):
+  `diffWords()` can report spaces between replaced words as unchanged, which
+  splits phrase-level replacements into per-word delete/add pairs such as
+  `{--a--}{++d++} {--b--}{++e++}`. User requested phrase-level output, e.g.
+  `{--a b c--}{++d e f++}`. Proposed approach: when a changed hunk is followed
+  by whitespace-only unchanged text and then another change, treat that
+  whitespace as part of the same replacement hunk for both removed and added
+  sides. Stop grouping before the next non-whitespace unchanged text.
+
 ## Roadmap & Issues
 - Execution roadmap: [docs/roadmap.md](docs/roadmap.md)
 - Original product spec: [docs/Initial-prd.md](docs/Initial-prd.md)

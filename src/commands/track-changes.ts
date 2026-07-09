@@ -17,29 +17,52 @@ let trackedDocUri: string | undefined;
 /**
  * Convert a diff between old and new text into CriticMarkup.
  *
- * Uses `diffWords()` from the `diff` package. Adjacent remove+add pairs
- * are collapsed into substitutions ({~~ old ~> new ~~}).
+ * Uses `diffWords()` from the `diff` package. Each changed hunk emits all
+ * removed text first, then all added text, before the next non-whitespace
+ * unchanged text. Whitespace-only unchanged segments between changed words are
+ * absorbed into the hunk so phrase replacements stay grouped.
  */
 function generateCriticMarkup(oldText: string, newText: string): string {
     const changes = diffWords(oldText, newText);
     let result = '';
+
     for (let i = 0; i < changes.length; i++) {
         const change = changes[i];
-        if (change.added) {
-            result += `{++${change.value}++}`;
-        } else if (change.removed) {
-            // Check if next change is an addition (substitution pattern)
-            const next = changes[i + 1];
-            if (next && next.added) {
-                result += `{~~${change.value}~>${next.value}~~}`;
-                i++; // skip the addition, consumed as substitution
-            } else {
-                result += `{--${change.value}--}`;
-            }
-        } else {
+
+        if (!change.added && !change.removed) {
             result += change.value;
+            continue;
+        }
+
+        let removedText = '';
+        let addedText = '';
+
+        while (i < changes.length) {
+            const hunkPart = changes[i];
+
+            if (hunkPart.removed) {
+                removedText += hunkPart.value;
+            } else if (hunkPart.added) {
+                addedText += hunkPart.value;
+            } else if (/^\s+$/.test(hunkPart.value) && (changes[i + 1]?.added || changes[i + 1]?.removed)) {
+                removedText += hunkPart.value;
+                addedText += hunkPart.value;
+            } else {
+                break;
+            }
+
+            i++;
+        }
+        i--;
+
+        if (removedText) {
+            result += `{--${removedText}--}`;
+        }
+        if (addedText) {
+            result += `{++${addedText}++}`;
         }
     }
+
     return result;
 }
 
