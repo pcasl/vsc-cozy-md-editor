@@ -258,6 +258,24 @@ The `.claude/skills/` directory contains Claude Code skills for this project:
   whitespace as part of the same replacement hunk for both removed and added
   sides. Stop grouping before the next non-whitespace unchanged text.
 
+
+- **Add Clean display mode for track changes** (2026-07-09):
+  Current editor chrome has two display modes: Cozy (decorated markdown) and MD
+  (raw markdown). User requested a third `Clean` mode where additions render like
+  Cozy mode, but CriticMarkup comments and deletions collapse to icons instead
+  of showing their text content. Proposed approach: extend the decoration manager
+  from a boolean enabled/disabled state to a `cozy` / `clean` / `md` display
+  mode, keep raw MD as decoration-off, and register Clean-specific CriticMarkup
+  providers for comment/deletion content that hide text while showing icons.
+
+
+- **Display mode toolbar button labels should reflect the current mode** (2026-07-09):
+  After adding the three-mode cycle, the editor-title button label shows the
+  destination command (`Clean`, `MD`, `Cozy`) instead of the current display mode.
+  User expects the circular button label to update according to the active mode.
+  Proposed approach: keep the same command cycle (`cozy -> clean -> md -> cozy`)
+  but set the visible command titles to the current mode for each `when` state.
+
 ## Roadmap & Issues
 - Execution roadmap: [docs/roadmap.md](docs/roadmap.md)
 - Original product spec: [docs/Initial-prd.md](docs/Initial-prd.md)

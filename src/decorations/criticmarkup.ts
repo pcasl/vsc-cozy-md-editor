@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { parseCriticMarkup, CriticMarkupRange } from '../parsers/criticmarkup';
-import { DecorationManager, DecorationProvider, DecoratedRegion } from './manager';
+import { DecorationDisplayMode, DecorationManager, DecorationProvider, DecoratedRegion } from './manager';
 
 // ---------------------------------------------------------------------------
 // Sub-provider IDs
@@ -9,10 +9,12 @@ import { DecorationManager, DecorationProvider, DecoratedRegion } from './manage
 const ID_DELIMITERS = 'criticmarkup-delimiters';
 const ID_ADDITION_CONTENT = 'criticmarkup-addition-content';
 const ID_DELETION_CONTENT = 'criticmarkup-deletion-content';
+const ID_DELETION_ICON = 'criticmarkup-deletion-icon';
 const ID_SUB_OLD = 'criticmarkup-substitution-old';
 const ID_SUB_NEW = 'criticmarkup-substitution-new';
 const ID_SUB_ARROW = 'criticmarkup-substitution-arrow';
 const ID_COMMENT = 'criticmarkup-comment';
+const ID_COMMENT_ICON = 'criticmarkup-comment-icon';
 const ID_HIGHLIGHT_CONTENT = 'criticmarkup-highlight-content';
 
 // ---------------------------------------------------------------------------
@@ -57,6 +59,15 @@ const DELETION_CONTENT_EXPANDED: vscode.DecorationRenderOptions = {
     textDecoration: 'line-through',
 };
 
+const DELETION_ICON_COLLAPSED: vscode.DecorationRenderOptions = {
+    ...HIDDEN,
+    before: {
+        contentText: '⌫',
+        color: 'rgba(220, 50, 50, 0.85)',
+        margin: '0 4px 0 0',
+    },
+};
+
 // --- Substitution old text ---
 
 const SUB_OLD_COLLAPSED: vscode.DecorationRenderOptions = {
@@ -97,6 +108,15 @@ const COMMENT_COLLAPSED: vscode.DecorationRenderOptions = {
 const COMMENT_EXPANDED: vscode.DecorationRenderOptions = {
     backgroundColor: 'rgba(255, 200, 0, 0.15)',
     fontStyle: 'italic',
+};
+
+const COMMENT_ICON_COLLAPSED: vscode.DecorationRenderOptions = {
+    ...HIDDEN,
+    before: {
+        contentText: '💬',
+        color: 'rgba(255, 180, 0, 0.85)',
+        margin: '0 4px 0 0',
+    },
 };
 
 // --- Highlight content ---
@@ -264,6 +284,14 @@ class DeletionContentProvider implements DecorationProvider {
 }
 
 /**
+ * Clean deletion provider — hides deleted text and shows a compact deletion icon.
+ * Expanded state still reveals the deleted text for editing when cursor enters it.
+ */
+class DeletionIconProvider extends DeletionContentProvider {
+    readonly id = ID_DELETION_ICON;
+}
+
+/**
  * Substitution old text provider — targets old text in {~~ old ~> new ~~}.
  * Collapsed: hidden (transparent + negative letter-spacing).
  * Expanded: red background + strikethrough.
@@ -423,6 +451,14 @@ class CommentContentProvider implements DecorationProvider {
 }
 
 /**
+ * Clean comment provider — hides comment text and shows only the comment icon.
+ * Expanded state still reveals the comment text for editing when cursor enters it.
+ */
+class CommentIconProvider extends CommentContentProvider {
+    readonly id = ID_COMMENT_ICON;
+}
+
+/**
  * Highlight content provider — targets the text between {== and ==}.
  * Collapsed: subtle yellow background. Expanded: slightly stronger yellow.
  */
@@ -486,13 +522,14 @@ export class CriticMarkupDecorationProvider implements vscode.Disposable {
     constructor(private readonly manager: DecorationManager) {
         // 1. Delimiters — shared across all CriticMarkup types
         //    Collapsed: hidden. Expanded: dimmed.
-        this.register(new DelimiterProvider(), HIDDEN, DIMMED);
+        this.register(new DelimiterProvider(), HIDDEN, DIMMED, ['cozy', 'clean']);
 
         // 2. Addition content
         this.register(
             new AdditionContentProvider(),
             ADDITION_CONTENT_COLLAPSED,
             ADDITION_CONTENT_EXPANDED,
+            ['cozy', 'clean'],
         );
 
         // 3. Deletion content
@@ -500,6 +537,15 @@ export class CriticMarkupDecorationProvider implements vscode.Disposable {
             new DeletionContentProvider(),
             DELETION_CONTENT_COLLAPSED,
             DELETION_CONTENT_EXPANDED,
+            ['cozy'],
+        );
+
+        // 3b. Clean deletion icon
+        this.register(
+            new DeletionIconProvider(),
+            DELETION_ICON_COLLAPSED,
+            DELETION_CONTENT_EXPANDED,
+            ['clean'],
         );
 
         // 4. Substitution old text
@@ -507,6 +553,7 @@ export class CriticMarkupDecorationProvider implements vscode.Disposable {
             new SubstitutionOldProvider(),
             SUB_OLD_COLLAPSED,
             SUB_OLD_EXPANDED,
+            ['cozy', 'clean'],
         );
 
         // 5. Substitution new text
@@ -514,16 +561,26 @@ export class CriticMarkupDecorationProvider implements vscode.Disposable {
             new SubstitutionNewProvider(),
             SUB_NEW_COLLAPSED,
             SUB_NEW_EXPANDED,
+            ['cozy', 'clean'],
         );
 
         // 6. Substitution arrow (~>)
-        this.register(new SubstitutionArrowProvider(), HIDDEN, DIMMED);
+        this.register(new SubstitutionArrowProvider(), HIDDEN, DIMMED, ['cozy', 'clean']);
 
         // 7. Comment content
         this.register(
             new CommentContentProvider(),
             COMMENT_COLLAPSED,
             COMMENT_EXPANDED,
+            ['cozy'],
+        );
+
+        // 7b. Clean comment icon
+        this.register(
+            new CommentIconProvider(),
+            COMMENT_ICON_COLLAPSED,
+            COMMENT_EXPANDED,
+            ['clean'],
         );
 
         // 8. Highlight content
@@ -531,6 +588,7 @@ export class CriticMarkupDecorationProvider implements vscode.Disposable {
             new HighlightContentProvider(),
             HIGHLIGHT_CONTENT_COLLAPSED,
             HIGHLIGHT_CONTENT_EXPANDED,
+            ['cozy', 'clean'],
         );
     }
 
@@ -538,8 +596,9 @@ export class CriticMarkupDecorationProvider implements vscode.Disposable {
         provider: DecorationProvider,
         collapsed: vscode.DecorationRenderOptions,
         expanded: vscode.DecorationRenderOptions,
+        modes?: DecorationDisplayMode[],
     ): void {
-        this.manager.registerProvider(provider, collapsed, expanded);
+        this.manager.registerProvider(provider, collapsed, expanded, modes);
         this.registeredIds.push(provider.id);
     }
 

@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 
+export type DecorationDisplayMode = 'cozy' | 'clean' | 'md';
+
 // ---------------------------------------------------------------------------
 // Public interfaces
 // ---------------------------------------------------------------------------
@@ -43,14 +45,15 @@ export class DecorationManager implements vscode.Disposable {
     private disposables: vscode.Disposable[] = [];
     private providers: Map<string, DecorationProvider> = new Map();
 
-    /** When false, all decorations are cleared and updates are skipped. */
-    private _enabled = true;
+    /** Current markdown display mode. `md` means raw markdown with decorations off. */
+    private _displayMode: DecorationDisplayMode = 'cozy';
 
-    get enabled(): boolean { return this._enabled; }
+    get displayMode(): DecorationDisplayMode { return this._displayMode; }
+    get enabled(): boolean { return this._displayMode !== 'md'; }
 
-    setEnabled(value: boolean): void {
-        this._enabled = value;
-        if (!value) {
+    setDisplayMode(value: DecorationDisplayMode): void {
+        this._displayMode = value;
+        if (value === 'md') {
             const editor = vscode.window.activeTextEditor;
             if (editor) { this.clearAllDecorations(editor); }
         } else {
@@ -58,11 +61,16 @@ export class DecorationManager implements vscode.Disposable {
         }
     }
 
+    setEnabled(value: boolean): void {
+        this.setDisplayMode(value ? 'cozy' : 'md');
+    }
+
     // Two TextEditorDecorationTypes per provider — one for collapsed, one for expanded.
     // These are long-lived VS Code objects; we dispose them when the provider is
     // unregistered or when the manager is disposed.
     private collapsedTypes: Map<string, vscode.TextEditorDecorationType> = new Map();
     private expandedTypes: Map<string, vscode.TextEditorDecorationType> = new Map();
+    private providerModes: Map<string, Set<DecorationDisplayMode>> = new Map();
 
     // Cached regions from the last provideDecorations() call, keyed by provider id.
     private regions: Map<string, DecoratedRegion[]> = new Map();
@@ -115,11 +123,13 @@ export class DecorationManager implements vscode.Disposable {
         provider: DecorationProvider,
         collapsedStyle: vscode.DecorationRenderOptions,
         expandedStyle: vscode.DecorationRenderOptions,
+        modes: DecorationDisplayMode[] = ['cozy', 'clean'],
     ): void {
         // Clean up previous registration if any.
         this.unregisterProvider(provider.id);
 
         this.providers.set(provider.id, provider);
+        this.providerModes.set(provider.id, new Set(modes));
         this.collapsedTypes.set(
             provider.id,
             vscode.window.createTextEditorDecorationType(collapsedStyle),
@@ -140,6 +150,7 @@ export class DecorationManager implements vscode.Disposable {
     unregisterProvider(id: string): void {
         this.providers.delete(id);
         this.regions.delete(id);
+        this.providerModes.delete(id);
 
         const collapsed = this.collapsedTypes.get(id);
         if (collapsed) {
@@ -171,7 +182,7 @@ export class DecorationManager implements vscode.Disposable {
             return;
         }
 
-        if (!this._enabled) {
+        if (this._displayMode === 'md') {
             this.clearAllDecorations(editor);
             return;
         }
@@ -183,6 +194,10 @@ export class DecorationManager implements vscode.Disposable {
         }
 
         for (const [id, provider] of this.providers) {
+            if (!this.providerModes.get(id)?.has(this._displayMode)) {
+                this.regions.set(id, []);
+                continue;
+            }
             try {
                 const newRegions = provider.provideDecorations(editor);
                 this.regions.set(id, newRegions);
@@ -213,7 +228,7 @@ export class DecorationManager implements vscode.Disposable {
     private onCursorChange(event: vscode.TextEditorSelectionChangeEvent): void {
         const editor = event.textEditor;
 
-        if (!this._enabled || editor.document.languageId !== 'markdown') {
+        if (this._displayMode === 'md' || editor.document.languageId !== 'markdown') {
             return;
         }
 
