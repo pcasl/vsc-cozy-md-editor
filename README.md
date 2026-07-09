@@ -12,6 +12,8 @@
 
 A VS Code extension that makes markdown easier to work with — especially if you're more used to Google Docs than to code editors.
 
+**Author / maintainer:** Li Zhao. This is a fork of the original Cozy Markdown Editor project by the original author/publisher, `dudgeon`.
+
 A lot of people are coming to VS Code for the first time because it's the main way to use Claude Code. If that's you, and you're staring at a bunch of `**` and `#` symbols wondering what happened to your formatting — this extension should help.
 
 ## What it does
@@ -75,7 +77,7 @@ Install from the [VS Code Marketplace](https://marketplace.visualstudio.com/item
 
 1. **Clone the repo** and install dependencies:
    ```bash
-   git clone https://github.com/dudgeon/vsc-cozy-md-editor.git
+   git clone https://github.com/pcasl/vsc-cozy-md-editor.git
    cd vsc-cozy-md-editor
    nvm use          # requires Node 20+
    npm install
@@ -93,19 +95,23 @@ Install from the [VS Code Marketplace](https://marketplace.visualstudio.com/item
 | Link | Cmd+K | Ctrl+K |
 | Cycle heading level | Cmd+Shift+H | Ctrl+Shift+H |
 | Insert frontmatter | Cmd+Option+F | Ctrl+Alt+F |
-| Table menu | Cmd+Option+T | Ctrl+Alt+T |
+| Table menu | Cmd+Shift+T | Ctrl+Alt+T |
 | Indent lines | Cmd+] | Ctrl+] |
 | Outdent lines | Cmd+[ | Ctrl+[ |
-| Toggle track changes | Cmd+Shift+T | Ctrl+Shift+T |
+| Toggle track changes | Cmd+Option+T | Ctrl+Shift+T |
 | Add comment | Cmd+Option+M | Ctrl+Alt+M |
 | Accept change | Cmd+Option+A | Ctrl+Alt+A |
 | Reject change | Cmd+Option+R | Ctrl+Alt+R |
 | Next change | Cmd+Option+] | Ctrl+Alt+] |
 | Previous change | Cmd+Option+[ | Ctrl+Alt+[ |
 
-## Switching between Cozy and standard editing
+## Switching between Cozy, Clean, and standard editing
 
-**Raw markdown mode:** Click the **Cozy** button in the toolbar to switch to **MD** mode — all decorations are disabled and you see the raw markdown. Click **MD** to switch back.
+**Cozy mode:** Decorated markdown with formatting polish and full CriticMarkup rendering.
+
+**Clean mode:** Additions still render inline, while comments and deleted text collapse to compact icons.
+
+**Raw markdown mode:** Click the mode button in the toolbar to cycle **Cozy → Clean → MD**. In **MD** mode, decorations are disabled and you see the raw markdown.
 
 **Reverting to VS Code defaults:** If you want to go back to VS Code's standard markdown editing (no Cozy MD decorations or font changes), disable the extension in the Extensions panel (`Cmd+Shift+X`), find "Cozy Markdown Editor", and click **Disable**. Your editor settings will revert to their previous values.
 
@@ -113,7 +119,7 @@ Install from the [VS Code Marketplace](https://marketplace.visualstudio.com/item
 
 This is under active development. If something doesn't work, feels weird, or you wish it did something it doesn't — open an issue:
 
-**[github.com/dudgeon/vsc-cozy-md-editor/issues](https://github.com/dudgeon/vsc-cozy-md-editor/issues)**
+**[github.com/pcasl/vsc-cozy-md-editor/issues](https://github.com/pcasl/vsc-cozy-md-editor/issues)**
 
 You don't need to be technical. Just describe what happened or what you want, and a screenshot if you have one.
 

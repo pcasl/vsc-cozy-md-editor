@@ -2,7 +2,7 @@
   "name": "cozy-md-editor",
   "displayName": "Cozy Markdown Editor",
   "description": "An approachable VS Code extension for markdown editing with CriticMarkup track changes and Claude Code integration.",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "publisher": "dudgeon",
   "license": "MIT",
   "icon": "docs/icon.png",
@@ -640,16 +640,6 @@
         "when": "resourceLangId == markdown && editorTextFocus && !suggestWidgetVisible && !editorHasMultipleSelections"
       },
       {
-        "command": "cozyMd.onTabKey",
-        "key": "tab",
-        "when": "resourceLangId == markdown && editorTextFocus && !suggestWidgetVisible && !editorHasMultipleSelections && !inSnippetMode"
-      },
-      {
-        "command": "cozyMd.onShiftTabKey",
-        "key": "shift+tab",
-        "when": "resourceLangId == markdown && editorTextFocus && !suggestWidgetVisible && !editorHasMultipleSelections && !inSnippetMode"
-      },
-      {
         "command": "cozyMd.indentLines",
         "key": "ctrl+]",
         "mac": "cmd+]",
@@ -671,7 +661,14 @@
     "configurationDefaults": {
       "[markdown]": {
         "editor.lineNumbers": "on",
-        "editor.occurrencesHighlight": "off"
+        "editor.occurrencesHighlight": "off",
+        "editor.quickSuggestions": false,
+        "editor.wordBasedSuggestions": "off",
+        "editor.inlineSuggest.enabled": true
+      },
+      "github.copilot.enable": {
+        "markdown": true,
+        "plaintext": true
       },
       "workbench.colorCustomizations": {
         "[Default Dark Modern]": {

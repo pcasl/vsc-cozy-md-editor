@@ -283,6 +283,41 @@ The `.claude/skills/` directory contains Claude Code skills for this project:
   Cmd+Shift+T for opening the table menu. Proposed approach: update the macOS
   keybindings in `package.json` while leaving command IDs unchanged.
 
+
+- **Markdown word autocomplete should be enabled by default** (2026-07-09):
+  VS Code often does not auto-popup word suggestions in Markdown prose, and this
+  extension does not yet ship a custom completion provider. User requested word
+  autocomplete to work automatically. Proposed approach: add Markdown-scoped
+  `configurationDefaults` for `editor.quickSuggestions` and
+  `editor.wordBasedSuggestions` so VS Code's built-in word suggestions appear
+  while writing Markdown.
+
+
+- **Markdown autocomplete should prefer Copilot, not coding-style word suggest** (2026-07-09):
+  The previous Markdown autocomplete default enabled VS Code quick suggestions and
+  word-based suggestions, which feels like coding autocomplete in prose. User
+  clarified they want VS Code Copilot inline autocomplete instead. Proposed
+  approach: remove Markdown quick/word suggestion defaults, keep inline suggest
+  enabled for Markdown, and add a Copilot Markdown enablement default that is
+  harmless when Copilot is not installed.
+
+
+- **Remove Cozy Tab keybindings to preserve native VS Code/Copilot behavior** (2026-07-09):
+  Cozy MD binds Tab and Shift+Tab in Markdown for table/list navigation, which can
+  block native VS Code behavior such as accepting Copilot inline suggestions. User
+  requested removing Cozy's Tab shortcut so native VS Code shortcuts work.
+  Proposed approach: remove the contributed Tab and Shift+Tab keybindings from
+  `package.json` while keeping the underlying commands available for future UI or
+  command-palette use.
+
+
+- **README should identify Li Zhao as fork maintainer** (2026-07-09):
+  User requested the README author name be changed to Li Zhao and that the
+  project be described as a fork from the original author. Proposed approach:
+  add a README provenance/author note naming Li Zhao as maintainer of this fork,
+  crediting the original Cozy Markdown Editor author, and update nearby README
+  links/shortcut docs that are now stale in this fork.
+
 ## Roadmap & Issues
 - Execution roadmap: [docs/roadmap.md](docs/roadmap.md)
 - Original product spec: [docs/Initial-prd.md](docs/Initial-prd.md)
