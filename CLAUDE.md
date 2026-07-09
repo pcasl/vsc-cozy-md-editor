@@ -276,6 +276,13 @@ The `.claude/skills/` directory contains Claude Code skills for this project:
   Proposed approach: keep the same command cycle (`cozy -> clean -> md -> cozy`)
   but set the visible command titles to the current mode for each `when` state.
 
+
+- **Swap macOS shortcuts for track changes and table menu** (2026-07-09):
+  Current keybindings use Cmd+Shift+T for track changes and Cmd+Opt+T for the
+  table menu. User requested Cmd+Opt+T for toggling track changes and
+  Cmd+Shift+T for opening the table menu. Proposed approach: update the macOS
+  keybindings in `package.json` while leaving command IDs unchanged.
+
 ## Roadmap & Issues
 - Execution roadmap: [docs/roadmap.md](docs/roadmap.md)
 - Original product spec: [docs/Initial-prd.md](docs/Initial-prd.md)
