@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
-import { diffWords } from 'diff';
 import { parseCriticMarkup, CriticMarkupRange } from '../parsers/criticmarkup';
+import { normalizeTrackedChanges } from '../track-changes/revision-model';
 
 /**
  * Track changes commands: accept/reject CriticMarkup changes,
  * accept/reject all, next/previous change navigation, and
- * snapshot+diff track-changes recording.
+ * snapshot+revision-composition track-changes recording.
  */
 
 // ── Track Changes Recording State ────────────────────────────────────────
@@ -13,58 +13,6 @@ import { parseCriticMarkup, CriticMarkupRange } from '../parsers/criticmarkup';
 let isTracking = false;
 let snapshot: string | undefined;
 let trackedDocUri: string | undefined;
-
-/**
- * Convert a diff between old and new text into CriticMarkup.
- *
- * Uses `diffWords()` from the `diff` package. Each changed hunk emits all
- * removed text first, then all added text, before the next non-whitespace
- * unchanged text. Whitespace-only unchanged segments between changed words are
- * absorbed into the hunk so phrase replacements stay grouped.
- */
-function generateCriticMarkup(oldText: string, newText: string): string {
-    const changes = diffWords(oldText, newText);
-    let result = '';
-
-    for (let i = 0; i < changes.length; i++) {
-        const change = changes[i];
-
-        if (!change.added && !change.removed) {
-            result += change.value;
-            continue;
-        }
-
-        let removedText = '';
-        let addedText = '';
-
-        while (i < changes.length) {
-            const hunkPart = changes[i];
-
-            if (hunkPart.removed) {
-                removedText += hunkPart.value;
-            } else if (hunkPart.added) {
-                addedText += hunkPart.value;
-            } else if (/^\s+$/.test(hunkPart.value) && (changes[i + 1]?.added || changes[i + 1]?.removed)) {
-                removedText += hunkPart.value;
-                addedText += hunkPart.value;
-            } else {
-                break;
-            }
-
-            i++;
-        }
-        i--;
-
-        if (removedText) {
-            result += `{--${removedText}--}`;
-        }
-        if (addedText) {
-            result += `{++${addedText}++}`;
-        }
-    }
-
-    return result;
-}
 
 /**
  * Start tracking changes: snapshot the document and set state.
@@ -78,8 +26,8 @@ function startTracking(editor: vscode.TextEditor): void {
 }
 
 /**
- * Commit tracked changes: diff snapshot against current text, generate
- * CriticMarkup, and replace document content in a single `editor.edit()`.
+ * Commit tracked changes by composing existing revisions with the new edits,
+ * then replace document content in a single `editor.edit()`.
  */
 async function commitTracking(editor: vscode.TextEditor): Promise<void> {
     if (!isTracking || snapshot === undefined) {
@@ -102,7 +50,7 @@ async function commitTracking(editor: vscode.TextEditor): Promise<void> {
         return;
     }
 
-    const criticMarkupText = generateCriticMarkup(snapshot, currentText);
+    const criticMarkupText = normalizeTrackedChanges(snapshot, currentText);
 
     // Replace the entire document content in a single edit so Cmd+Z undoes
     // the whole CriticMarkup generation at once.

@@ -2,6 +2,20 @@
 
 All notable changes to the Cozy MD Editor extension will be documented in this file.
 
+## [0.4.4] - 2026-07-10
+
+### Changed
+
+- Replacements are now recorded as separate deletion and addition marks (`{--old--}{++new++}`) instead of CriticMarkup substitution marks.
+
+## [0.4.3] - 2026-07-10
+
+### Fixed
+
+- Track Changes now composes edits using Word-style revision logic instead of nesting CriticMarkup when an existing insertion, deletion, or substitution is edited.
+- Exact whitespace is preserved across accept/reject operations.
+- Previously nested revision markup is flattened during the next tracked edit.
+
 ## [0.3.0] - 2026-03-22
 
 ### Added
