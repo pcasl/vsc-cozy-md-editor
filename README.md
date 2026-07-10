@@ -10,11 +10,9 @@
   </a>
 </p>
 
-A VS Code extension that makes markdown easier to work with — especially if you're more used to Google Docs than to code editors.
+A VS Code extension that makes markdown easier, with critic support and a cozy reading experience. More importantly, it makes the useage of AI tools like ChatGPT and Claude Code more comfortable by providing a better reading experience for markdown files.
 
 **Author / maintainer:** Li Zhao. This is a fork of the original Cozy Markdown Editor project by the original author/publisher, `dudgeon`.
-
-A lot of people are coming to VS Code for the first time because it's the main way to use Claude Code. If that's you, and you're staring at a bunch of `**` and `#` symbols wondering what happened to your formatting — this extension should help.
 
 ## What it does
 
@@ -24,11 +22,7 @@ A lot of people are coming to VS Code for the first time because it's the main w
 
 **Lists and tables behave normally.** Hit Enter at the end of a bullet point and you get a new bullet. Tab indents. Tables have a toolbar for adding rows and columns, and Tab moves between cells. Tables auto-align when you save.
 
-**Track changes.** The extension reads and renders [CriticMarkup](https://criticmarkup.com) — a format for marking additions, deletions, and substitutions right in the file. Changes show up color-coded — green for additions, red strikethrough for deletions — and you can accept or reject them individually. Move your cursor to a change to see the full syntax and Accept/Reject controls.
-
-Track changes *recording* is built in — toggle it on and your edits are automatically wrapped in CriticMarkup. Claude Code integration lets you ask Claude about your file or selection directly from the editor.
-
-**Frontmatter.** Structured metadata (title, author, tags, status) can go at the top of any markdown file. The extension has templates and shortcuts so you don't have to remember the formatting rules.
+**Track changes.** The extension reads and renders [CriticMarkup](https://criticmarkup.com) — a format for marking additions, deletions, and substitutions right in the file. Changes show up color-coded — green for additions, red strikethrough for deletions — and you can accept or reject them individually. Move your cursor to a change to see the full syntax and Accept/Reject controls. Track changes *recording* is built in — toggle it on and your edits are automatically wrapped in CriticMarkup.
 
 ## Typography
 
@@ -53,57 +47,29 @@ Switch between them in Settings (`Cmd+,`) — search for "typography bundle".
 "cozyMd.typography.activeBundle": "monospace"
 ```
 
-Any property you leave out falls back to sensible defaults. You only need to specify what you want to change.
-
-**Font installation:** The Cozy bundle looks best with [Newsreader](https://fonts.google.com/specimen/Newsreader) and [Plus Jakarta Sans](https://fonts.google.com/specimen/Plus+Jakarta+Sans) installed (both free from Google Fonts). If they're not installed, the extension falls back to system fonts that look nearly as good — New York and Avenir Next on macOS, Georgia and system-ui elsewhere.
-
-## Google Docs pairing
-
-If you keep local markdown copies of Google Docs in your repo, you can record the relationship in each file's frontmatter:
-
-~~~markdown
-```yaml
-google_doc_url: https://docs.google.com/document/d/your-doc-id
-```
-~~~
-
-This also works for Google Slides — if you generate a presentation from a markdown file, store the Slides URL the same way. It's just metadata in the file, so it doesn't affect anything else. Full round-trip sync between markdown and Google Docs is on the roadmap.
-
 ## Installation
 
-Install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=dudgeon.cozy-md-editor) or search for **Cozy MD Editor** in the Extensions panel (`Cmd+Shift+X` / `Ctrl+Shift+X`).
-
-### Build from source (for contributors)
-
-1. **Clone the repo** and install dependencies:
-   ```bash
-   git clone https://github.com/pcasl/vsc-cozy-md-editor.git
-   cd vsc-cozy-md-editor
-   nvm use          # requires Node 20+
-   npm install
-   ```
-
-2. **Press F5** in VS Code to launch the Extension Development Host with the extension loaded. Open any `.md` file to see it in action.
+Install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=dudgeon.cozy-md-editor) or download the `.vsix` from the releases page
 
 ## Keyboard shortcuts
 
-| Action | Mac | Windows / Linux |
-|---|---|---|
-| Bold | Cmd+B | Ctrl+B |
-| Italic | Cmd+I | Ctrl+I |
-| Inline code | Cmd+` | Ctrl+` |
-| Link | Cmd+K | Ctrl+K |
-| Cycle heading level | Cmd+Shift+H | Ctrl+Shift+H |
-| Insert frontmatter | Cmd+Option+F | Ctrl+Alt+F |
-| Table menu | Cmd+Shift+T | Ctrl+Alt+T |
-| Indent lines | Cmd+] | Ctrl+] |
-| Outdent lines | Cmd+[ | Ctrl+[ |
-| Toggle track changes | Cmd+Option+T | Ctrl+Shift+T |
-| Add comment | Cmd+Option+M | Ctrl+Alt+M |
-| Accept change | Cmd+Option+A | Ctrl+Alt+A |
-| Reject change | Cmd+Option+R | Ctrl+Alt+R |
-| Next change | Cmd+Option+] | Ctrl+Alt+] |
-| Previous change | Cmd+Option+[ | Ctrl+Alt+[ |
+| Action               | Mac          | Windows / Linux |
+| -------------------- | ------------ | --------------- |
+| Bold                 | Cmd+B        | Ctrl+B          |
+| Italic               | Cmd+I        | Ctrl+I          |
+| Inline code          | Cmd+`        | Ctrl+`          |
+| Link                 | Cmd+K        | Ctrl+K          |
+| Cycle heading level  | Cmd+Shift+H  | Ctrl+Shift+H    |
+| Insert frontmatter   | Cmd+Option+F | Ctrl+Alt+F      |
+| Table menu           | Cmd+Shift+T  | Ctrl+Alt+T      |
+| Indent lines         | Cmd+]        | Ctrl+]          |
+| Outdent lines        | Cmd+[        | Ctrl+[          |
+| Toggle track changes | Cmd+Option+T | Ctrl+Shift+T    |
+| Add comment          | Cmd+Option+M | Ctrl+Alt+M      |
+| Accept change        | Cmd+Option+= | Ctrl+Alt+A      |
+| Reject change        | Cmd+Option+- | Ctrl+Alt+R      |
+| Next change          | Cmd+Option+] | Ctrl+Alt+]      |
+| Previous change      | Cmd+Option+[ | Ctrl+Alt+[      |
 
 ## Switching between Cozy, Clean, and standard editing
 

@@ -2,6 +2,12 @@
 
 All notable changes to the Cozy MD Editor extension will be documented in this file.
 
+## [0.4.5] - 2026-07-10
+
+### Changed
+
+- Changed the macOS shortcuts for accepting and rejecting tracked changes to `Cmd+Option+=` and `Cmd+Option+-`.
+
 ## [0.4.4] - 2026-07-10
 
 ### Changed
