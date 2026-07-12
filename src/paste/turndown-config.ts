@@ -21,7 +21,7 @@ turndownService.addRule('compactListItem', {
     filter: 'li',
     replacement: (content: string, node: any, options: any) => {
         // Strip paragraph-induced double newlines inside list items
-        let trimmed = content
+        const trimmed = content
             .replace(/^\n+/, '')
             .replace(/\n+$/, '')
             .replace(/\n\n+/g, '\n');

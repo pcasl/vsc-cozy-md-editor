@@ -71,6 +71,7 @@ and why.
 ## Decision Log
 Decisions made during implementation that override or refine the original PRD.
 
+- **Fork Marketplace identity** (2026-07-12): The fork is published as `rime.cozy-critic-md` rather than overwriting the original `dudgeon.cozy-md-editor` listing. README Marketplace links target the fork while preserving attribution to the original publisher.
 - **Hand-written parsers over markdown-it** (Phase 1): The PRD specified
   `markdown-it` for table boundary detection. Implementation used hand-written
   regex parsers for tables, CriticMarkup, and frontmatter instead. Reason:
@@ -311,14 +312,8 @@ The `.claude/skills/` directory contains Claude Code skills for this project:
   command-palette use.
 
 
-- **README should identify Li Zhao as fork maintainer** (2026-07-09):
-  User requested the README author name be changed to Li Zhao and that the
-  project be described as a fork from the original author. Proposed approach:
-  add a README provenance/author note naming Li Zhao as maintainer of this fork,
-  crediting the original Cozy Markdown Editor author, and update nearby README
-  links/shortcut docs that are now stale in this fork.
 
 ## Roadmap & Issues
 - Execution roadmap: [docs/roadmap.md](docs/roadmap.md)
 - Original product spec: [docs/Initial-prd.md](docs/Initial-prd.md)
-- Open issues: [GitHub Issues](https://github.com/dudgeon/vsc-cozy-md-editor/issues)
+- Open issues: [GitHub Issues](https://github.com/pcasl/vsc-cozy-md-editor/issues)

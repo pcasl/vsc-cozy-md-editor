@@ -1,12 +1,12 @@
-# Cozy Markdown Editor
+# Cozy Critic Markdown
 
 <p align="center">
-  <a href="https://marketplace.visualstudio.com/items?itemName=dudgeon.cozy-md-editor">
+  <a href="https://marketplace.visualstudio.com/items?itemName=rime.cozy-critic-md">
     <img src="docs/cozy-md-editor-fleece.png" width="200" alt="Cozy MD Editor logo — a fleece blanket with a markdown hash symbol" />
   </a>
   <br/>
-  <a href="https://marketplace.visualstudio.com/items?itemName=dudgeon.cozy-md-editor">
-    <img src="https://img.shields.io/visual-studio-marketplace/v/dudgeon.cozy-md-editor?label=VS%20Code%20Marketplace&color=blue" alt="VS Code Marketplace" />
+  <a href="https://marketplace.visualstudio.com/items?itemName=rime.cozy-critic-md">
+    <img src="https://img.shields.io/visual-studio-marketplace/v/rime.cozy-critic-md?label=VS%20Code%20Marketplace&color=blue" alt="VS Code Marketplace" />
   </a>
 </p>
 
@@ -49,7 +49,7 @@ Switch between them in Settings (`Cmd+,`) — search for "typography bundle".
 
 ## Installation
 
-Install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=dudgeon.cozy-md-editor) or download the `.vsix` from the releases page
+Install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=rime.cozy-critic-md) or download the `.vsix` from the releases page
 
 ## Keyboard shortcuts
 

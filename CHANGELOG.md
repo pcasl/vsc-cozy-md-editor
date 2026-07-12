@@ -2,6 +2,13 @@
 
 All notable changes to the Cozy MD Editor extension will be documented in this file.
 
+## [0.4.6] - 2026-07-12
+
+### Changed
+
+- Published the fork as Cozy Critic Markdown under the `rime` publisher.
+- Updated Marketplace links for the new extension identity.
+
 ## [0.4.5] - 2026-07-10
 
 ### Changed
