@@ -2,6 +2,28 @@
 
 All notable changes to the Cozy MD Editor extension will be documented in this file.
 
+## [0.4.9] - 2026-07-18
+
+### Fixed
+
+- Kept the cursor anchored at the equation's visual start when revealing LaTeX source for editing.
+- Prevented equations from expanding when the cursor is merely adjacent, avoiding unexpected line reflow and cursor shifts.
+
+## [0.4.8] - 2026-07-18
+
+### Fixed
+
+- Fixed a MathJax bundle path error that prevented the extension from activating and hid the Cozy, Clean, and MD mode controls.
+- Display-mode commands now register before optional equation rendering, so a renderer failure cannot disable the core editor modes.
+
+## [0.4.7] - 2026-07-18
+
+### Added
+
+- Live MathJax rendering for inline `$...$` and display `$$...$$` LaTeX equations in Cozy and Clean modes.
+- Cursor-aware equation editing that reveals the original LaTeX source.
+- Strict equation-parser isolation for CriticMarkup, inline code, and fenced code blocks.
+
 ## [0.4.6] - 2026-07-12
 
 ### Changed

@@ -18,6 +18,10 @@ export interface DecoratedRegion {
     /** Full span range for proximity check — e.g., covers `**bold**` entirely.
      *  When set, cursor anywhere in this range triggers expansion. */
     spanRange?: vscode.Range;
+    /** Whether a cursor one character outside the span should expand it.
+     * Defaults to true. Disable for replaced visual content whose source
+     * width would otherwise shift a nearby cursor. */
+    expandOnAdjacent?: boolean;
 }
 
 /** A decoration provider registers regions with the manager */
@@ -307,7 +311,12 @@ export class DecorationManager implements vscode.Disposable {
                 // Use spanRange (full construct) for proximity when available;
                 // fall back to the marker's own range otherwise.
                 const proximityRange = region.spanRange ?? region.range;
-                if (this.isCursorNearRegion(proximityRange, cursorLines, selections)) {
+                if (this.isCursorNearRegion(
+                    proximityRange,
+                    cursorLines,
+                    selections,
+                    region.expandOnAdjacent !== false,
+                )) {
                     directlyExpanded[i] = 1;
                     if (region.groupId) {
                         expandedGroupIds.add(region.groupId);
@@ -387,6 +396,7 @@ export class DecorationManager implements vscode.Disposable {
         range: vscode.Range,
         cursorLines: Set<number>,
         selections: readonly vscode.Selection[],
+        expandOnAdjacent: boolean,
     ): boolean {
         // Phase 1: Fast reject — if no cursor is on any line this region
         // spans, skip the expensive per-cursor range checks.
@@ -417,7 +427,7 @@ export class DecorationManager implements vscode.Disposable {
             // Check adjacency: cursor is within 1 character of the region's
             // start or end. This prevents flicker when the cursor sits just
             // outside a boundary (e.g., immediately after typing `**`).
-            if (this.isAdjacentToRange(cursor, range)) {
+            if (expandOnAdjacent && this.isAdjacentToRange(cursor, range)) {
                 return true;
             }
         }

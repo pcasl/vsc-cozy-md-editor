@@ -22,6 +22,8 @@ A VS Code extension that makes markdown easier, with critic support and a cozy r
 
 **Lists and tables behave normally.** Hit Enter at the end of a bullet point and you get a new bullet. Tab indents. Tables have a toolbar for adding rows and columns, and Tab moves between cells. Tables auto-align when you save.
 
+**Equations render while you type.** Inline `$x^2$` and display `$$\\int_0^1 x\,dx$$` LaTeX render directly in Cozy and Clean modes. Move the cursor into an equation to reveal and edit its source. Equation rendering ignores fenced code, inline code, and every CriticMarkup span.
+
 **Track changes.** The extension reads and renders [CriticMarkup](https://criticmarkup.com) — a format for marking additions, deletions, and substitutions right in the file. Changes show up color-coded — green for additions, red strikethrough for deletions — and you can accept or reject them individually. Move your cursor to a change to see the full syntax and Accept/Reject controls. Track changes *recording* is built in — toggle it on and your edits are automatically wrapped in CriticMarkup.
 
 ## Typography

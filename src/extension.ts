@@ -15,12 +15,26 @@ import { applyTypographyBundle } from './typography';
 
 let decorationManager: DecorationManager | undefined;
 
-export function activate(context: vscode.ExtensionContext): void {
+export async function activate(context: vscode.ExtensionContext): Promise<void> {
     console.log('Cozy MD Editor is now active');
 
     // Phase 1: Decoration manager + markdown polish
     decorationManager = new DecorationManager();
     context.subscriptions.push(decorationManager);
+
+    // Register display-mode switching before optional feature providers. This
+    // keeps Cozy/Clean/MD available even if a renderer cannot initialize.
+    const setDecorationMode = (mode: 'cozy' | 'clean' | 'md') => {
+        decorationManager?.setDisplayMode(mode);
+        void vscode.commands.executeCommand('setContext', 'cozyMd.decorationMode', mode);
+        void vscode.commands.executeCommand('setContext', 'cozyMd.decorationsEnabled', mode !== 'md');
+    };
+    context.subscriptions.push(
+        vscode.commands.registerCommand('cozyMd.enableDecorations', () => setDecorationMode('cozy')),
+        vscode.commands.registerCommand('cozyMd.disableDecorations', () => setDecorationMode('md')),
+        vscode.commands.registerCommand('cozyMd.cleanDecorations', () => setDecorationMode('clean')),
+    );
+    setDecorationMode('cozy');
 
     const polishProvider = new MarkdownPolishProvider(decorationManager);
     context.subscriptions.push(polishProvider);
@@ -62,23 +76,22 @@ export function activate(context: vscode.ExtensionContext): void {
     const criticMarkupProvider = new CriticMarkupDecorationProvider(decorationManager);
     context.subscriptions.push(criticMarkupProvider);
 
+    // Live LaTeX equations. The provider explicitly excludes CriticMarkup
+    // spans so math rendering and review decorations remain independent.
+    try {
+        // Load MathJax lazily so a renderer-specific failure can never abort
+        // activation of editing, CriticMarkup, or display-mode commands.
+        const { MathDecorationProvider } = await import('./decorations/math');
+        const mathProvider = new MathDecorationProvider(decorationManager);
+        context.subscriptions.push(mathProvider);
+    } catch (error) {
+        console.error('Cozy MD: live equation rendering failed to initialize', error);
+    }
+
     // Phase 2: Register CriticMarkup decorations (done above)
     // Phase 2: CodeLens provider now includes CriticMarkup accept/reject (in codelens.ts)
     // Phase 3: Track changes commands (accept/reject, navigation)
     registerTrackChangesCommands(context);
-    // Phase 4: MD/Cozy/Clean decoration mode toggle
-    const setDecorationMode = (mode: 'cozy' | 'clean' | 'md') => {
-        decorationManager?.setDisplayMode(mode);
-        vscode.commands.executeCommand('setContext', 'cozyMd.decorationMode', mode);
-        vscode.commands.executeCommand('setContext', 'cozyMd.decorationsEnabled', mode !== 'md');
-    };
-    setDecorationMode('cozy');
-    context.subscriptions.push(
-        vscode.commands.registerCommand('cozyMd.enableDecorations', () => setDecorationMode('cozy')),
-        vscode.commands.registerCommand('cozyMd.disableDecorations', () => setDecorationMode('md')),
-        vscode.commands.registerCommand('cozyMd.cleanDecorations', () => setDecorationMode('clean')),
-    );
-
     // Phase 3: Toggle preview (one-line wrapper)
     context.subscriptions.push(
         vscode.commands.registerCommand('cozyMd.togglePreview', () => {
